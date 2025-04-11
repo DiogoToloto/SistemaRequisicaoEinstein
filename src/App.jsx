@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { BellIcon, TrashIcon, CheckIcon } from "lucide-react";
+import { BellIcon, TrashIcon, CheckIcon, List, Clock, CheckCircle, Check, Trash } from "lucide-react";
 
 const setores = [
   "CME 5",
@@ -203,85 +203,137 @@ export default function App() {
       )}
 
       {pagina === "almoxarife" && (
-        <div>
+        <div className="position-relative">
           <h2 className="h5 mb-4">Requisições Recebidas</h2>
-          {setores.map((setor) => (
-            <div key={setor} className="mb-5 pt-3 border-top">
-              <h3 className="h6 mb-3 text-primary fw-bold">Setor: {setor}</h3>
-              {requisicoesPorSetor(setor).length === 0 ? (
-                <p className="text-muted">Nenhuma requisição neste setor.</p>
-              ) : (
-                <div className="overflow-auto" style={{ whiteSpace: "nowrap" }}>
-                  {requisicoesPorSetor(setor).map((req) => (
-                    <div
-                      key={req.id}
-                      className="card d-inline-block me-3 p-3"
-                      style={{
-                        minWidth: "300px",
-                        maxWidth: "300px",
-                        verticalAlign: "top",
-                      }}
-                    >
-                      <p>
-                        <strong>Nome:</strong> {req.nome}
-                      </p>
-                      <p>
-                        <strong>DRT:</strong> {req.drt}
-                      </p>
-                      <p>
-                        <strong>Plantão:</strong> {req.plantao}
-                      </p>
-                      <p>
-                        <strong>Setor:</strong> {req.setor}
-                      </p>
-                      <p>
-                        <strong>Itens:</strong>{" "}
-                        <pre className="bg-light p-2 rounded">{req.itens}</pre>
-                      </p>
-                      <p>
-                        <strong>Data/Hora:</strong> {req.dataHora}
-                      </p>
-                      <div className="d-flex gap-2 mt-2">
-                        {!req.finalizado && (
-                          <button
-                            onClick={() => marcarFinalizado(req.id)}
-                            className="btn btn-success btn-sm d-flex align-items-center"
-                          >
-                            <CheckIcon size={16} className="me-1" /> Finalizar
-                          </button>
-                        )}
-                        <button
-                          onClick={() => setConfirmaExcluir(req.id)}
-                          className="btn btn-danger btn-sm d-flex align-items-center"
-                        >
-                          <TrashIcon size={16} className="me-1" /> Deletar
-                        </button>
-                      </div>
-                      {confirmaExcluir === req.id && (
-                        <div className="alert alert-warning mt-3">
-                          <p>Tem certeza que deseja excluir esta requisição?</p>
-                          <div className="d-flex gap-2 mt-2">
-                            <button
-                              onClick={() => deletarRequisicao(req.id)}
-                              className="btn btn-danger btn-sm"
-                            >
-                              Sim, Excluir
-                            </button>
-                            <button
-                              onClick={() => setConfirmaExcluir(null)}
-                              className="btn btn-secondary btn-sm"
-                            >
-                              Cancelar
-                            </button>
-                          </div>
-                        </div>
-                      )}
-                    </div>
-                  ))}
-                </div>
-              )}
+
+          {/* Contadores - canto superior direito */}
+          <div className="position-absolute top-0 end-0 mt-2 me-3 d-flex gap-3 flex-wrap justify-content-end">
+            <div
+              className="card text-center border-primary shadow-sm"
+              style={{ width: "10rem" }}
+            >
+              <div className="card-body p-2">
+                <h6 className="card-title text-primary d-flex align-items-center justify-content-center gap-1">
+                  <List size={16} /> Total
+                </h6>
+                <p className="fs-5 fw-bold mb-0">{requisicoes.length}</p>
+              </div>
             </div>
-          ))}
+            <div
+              className="card text-center border-warning shadow-sm"
+              style={{ width: "10rem" }}
+            >
+              <div className="card-body p-2">
+                <h6 className="card-title text-warning d-flex align-items-center justify-content-center gap-1">
+                  <Clock size={16} /> Pendentes
+                </h6>
+                <p className="fs-5 fw-bold mb-0">
+                  {requisicoes.filter((r) => !r.finalizado).length}
+                </p>
+              </div>
+            </div>
+            <div
+              className="card text-center border-success shadow-sm"
+              style={{ width: "10rem" }}
+            >
+              <div className="card-body p-2">
+                <h6 className="card-title text-success d-flex align-items-center justify-content-center gap-1">
+                  <CheckCircle size={16} /> Finalizadas
+                </h6>
+                <p className="fs-5 fw-bold mb-0">
+                  {requisicoes.filter((r) => r.finalizado).length}
+                </p>
+              </div>
+            </div>
+          </div>
+
+          {/* Cards por setor */}
+          <div className="mt-5">
+            {setores.map((setor) => (
+              <div key={setor} className="mb-5 pt-3 border-top">
+                <h3 className="h6 mb-3 text-primary fw-bold">Setor: {setor}</h3>
+                {requisicoesPorSetor(setor).length === 0 ? (
+                  <p className="text-muted">Nenhuma requisição neste setor.</p>
+                ) : (
+                  <div
+                    className="overflow-auto"
+                    style={{ whiteSpace: "nowrap" }}
+                  >
+                    {requisicoesPorSetor(setor).map((req) => (
+                      <div
+                        key={req.id}
+                        className="card d-inline-block me-3 p-3"
+                        style={{
+                          minWidth: "300px",
+                          maxWidth: "300px",
+                          verticalAlign: "top",
+                        }}
+                      >
+                        <p>
+                          <strong>Nome:</strong> {req.nome}
+                        </p>
+                        <p>
+                          <strong>DRT:</strong> {req.drt}
+                        </p>
+                        <p>
+                          <strong>Plantão:</strong> {req.plantao}
+                        </p>
+                        <p>
+                          <strong>Setor:</strong> {req.setor}
+                        </p>
+                        <p>
+                          <strong>Itens:</strong>{" "}
+                          <pre className="bg-light p-2 rounded">
+                            {req.itens}
+                          </pre>
+                        </p>
+                        <p>
+                          <strong>Data/Hora:</strong> {req.dataHora}
+                        </p>
+                        <div className="d-flex gap-2 mt-2">
+                          {!req.finalizado && (
+                            <button
+                              onClick={() => marcarFinalizado(req.id)}
+                              className="btn btn-success btn-sm d-flex align-items-center"
+                            >
+                              <Check size={16} className="me-1" /> Finalizar
+                            </button>
+                          )}
+                          <button
+                            onClick={() => setConfirmaExcluir(req.id)}
+                            className="btn btn-danger btn-sm d-flex align-items-center"
+                          >
+                            <Trash size={16} className="me-1" /> Deletar
+                          </button>
+                        </div>
+                        {confirmaExcluir === req.id && (
+                          <div className="alert alert-warning mt-3">
+                            <p>
+                              Tem certeza que deseja excluir esta requisição?
+                            </p>
+                            <div className="d-flex gap-2 mt-2">
+                              <button
+                                onClick={() => deletarRequisicao(req.id)}
+                                className="btn btn-danger btn-sm"
+                              >
+                                Sim, Excluir
+                              </button>
+                              <button
+                                onClick={() => setConfirmaExcluir(null)}
+                                className="btn btn-secondary btn-sm"
+                              >
+                                Cancelar
+                              </button>
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
         </div>
       )}
     </div>
